@@ -30,6 +30,13 @@
 ![[audio.ogg]]
 ```
 
+## Embed Video
+
+```markdown
+![[video.mp4]]
+![[video.webm]]
+```
+
 ## Embed PDF
 
 ```markdown

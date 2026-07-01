@@ -6,20 +6,20 @@ These skills follow the [Agent Skills specification](https://agentskills.io/spec
 
 ### Marketplace
 
-```
+```text
 /plugin marketplace add kepano/obsidian-skills
 /plugin install obsidian@obsidian-skills
 ```
 
 ### npx skills
 
-```
+```sh
 npx skills add git@github.com:kepano/obsidian-skills.git
 ```
 
 Instead of ssh, if you prefer to use https:
 
-```
+```sh
 npx skills add https://github.com/kepano/obsidian-skills
 ```
 

@@ -1,0 +1,63 @@
+name: Sync obsidian-skills from upstream
+
+on:
+  schedule:
+    # Weekly, Monday 05:23 UTC
+    - cron: "23 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout this repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Clone upstream kepano/obsidian-skills
+        run: git clone --depth 1 https://github.com/kepano/obsidian-skills.git /tmp/upstream
+
+      - name: Mirror upstream content
+        run: |
+          # Skills and plugin manifests mirror upstream verbatim.
+          rsync -a --delete /tmp/upstream/skills/ skills/
+          rsync -a --delete /tmp/upstream/.claude-plugin/ .claude-plugin/
+
+          # Upstream's root README.md lives at skills/README.md here (the root
+          # README belongs to the Minimal theme). Rewrite its catalog links,
+          # which are root-relative upstream, to be sibling-relative.
+          sed 's|](skills/|](./|g' /tmp/upstream/README.md > skills/README.md
+
+          # Fail loudly if the rewrite stops matching upstream's link format:
+          # the result must contain sibling-relative catalog links and no
+          # remaining root-relative ones.
+          if grep -q '](skills/' skills/README.md || ! grep -q '](\./' skills/README.md; then
+            echo "::error::skills/README.md link rewrite failed; upstream README format may have changed" >&2
+            exit 1
+          fi
+
+          rm -rf /tmp/upstream
+
+      - name: Open pull request if upstream changed
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: sync/obsidian-skills
+          commit-message: "Sync skills from kepano/obsidian-skills"
+          title: "Sync skills from upstream kepano/obsidian-skills"
+          body: |
+            Automated weekly sync from [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills).
+
+            This mirrors `skills/` and `.claude-plugin/` verbatim and places the
+            upstream root README at `skills/README.md` with catalog links
+            rewritten to sibling-relative paths.
+
+            Note: any local edits to the vendored skill docs are overwritten by
+            this sync — review the diff before merging if local fixes should be
+            preserved or re-applied.
+          delete-branch: true

@@ -13,9 +13,12 @@ permissions:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout this repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Clone upstream kepano/obsidian-skills
         run: git clone --depth 1 https://github.com/kepano/obsidian-skills.git /tmp/upstream
@@ -30,6 +33,14 @@ jobs:
           # README belongs to the Minimal theme). Rewrite its catalog links,
           # which are root-relative upstream, to be sibling-relative.
           sed 's|](skills/|](./|g' /tmp/upstream/README.md > skills/README.md
+
+          # Fail loudly if the rewrite stops matching upstream's link format:
+          # the result must contain sibling-relative catalog links and no
+          # remaining root-relative ones.
+          if grep -q '](skills/' skills/README.md || ! grep -q '](\./' skills/README.md; then
+            echo "::error::skills/README.md link rewrite failed; upstream README format may have changed" >&2
+            exit 1
+          fi
 
           rm -rf /tmp/upstream
 

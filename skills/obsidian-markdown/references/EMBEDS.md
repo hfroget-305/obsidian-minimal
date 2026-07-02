@@ -30,19 +30,19 @@
 ![[audio.ogg]]
 ```
 
-## Embed Video
-
-```markdown
-![[video.mp4]]
-![[video.webm]]
-```
-
 ## Embed PDF
 
 ```markdown
 ![[document.pdf]]
 ![[document.pdf#page=3]]
 ![[document.pdf#height=400]]
+```
+
+## Embed Bases
+
+```markdown
+![[BaseFile.base]]
+![[BaseFile.base#View Name]]
 ```
 
 ## Embed Lists

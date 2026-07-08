@@ -7,7 +7,7 @@ owner:
 email:
 phone:
 value:
-created: 2026-01-01
+created: "{{date:YYYY-MM-DD}}"
 last_contact:
 next_action:
 next_action_date:

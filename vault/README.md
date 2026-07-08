@@ -15,7 +15,7 @@ Copy the `CRM/` folder to the root of your vault. It contains:
 | `CRM/Templates/*.md` | Note templates for Lead, Customer, Referral, Touchpoint records |
 | `CRM/Leads/`, `CRM/Customers/`, `CRM/Referrals/`, `CRM/Touchpoints/` | Example records so everything renders with data — replace with your own |
 
-Requires Obsidian 1.7+ for Bases. Point Obsidian's core Templates plugin at
+Requires Obsidian 1.9+ (the version that introduced Bases). Point Obsidian's core Templates plugin at
 `CRM/Templates` to create records quickly.
 
 The file node in the canvas references `CRM/CRM Home.md`, so keep the folder

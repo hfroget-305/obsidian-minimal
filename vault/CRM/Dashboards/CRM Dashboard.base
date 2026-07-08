@@ -2,6 +2,7 @@ filters:
   and:
     - file.hasTag("crm")
     - 'file.ext == "md"'
+    - '!file.inFolder("CRM/Templates")'
 
 formulas:
   days_since_contact: 'if(last_contact, (now() - date(last_contact)).days.round(0), "")'
@@ -57,17 +58,27 @@ views:
   - type: table
     name: "Follow-ups Due"
     filters:
-      and:
-        - 'type == "lead"'
-        - 'status != "won"'
-        - 'status != "lost"'
-        - 'date(next_action_date) <= today()'
+      or:
+        - and:
+            - 'type == "lead"'
+            - 'status != "won"'
+            - 'status != "lost"'
+            - 'if(next_action_date, date(next_action_date) <= today(), false)'
+        - and:
+            - 'type == "touchpoint"'
+            - 'if(follow_up_date, date(follow_up_date) <= today(), false)'
+    sort:
+      - property: next_action_date
+        direction: ASC
     order:
       - file.name
+      - about
       - status
       - next_action
       - next_action_date
       - formula.days_to_action
+      - follow_up
+      - follow_up_date
       - last_contact
 
   - type: table
@@ -101,7 +112,7 @@ views:
             - 'health == "red"'
             - 'health == "yellow"'
             - 'status == "at-risk"'
-            - '(now() - date(last_contact)).days > 30'
+            - 'if(last_contact, (now() - date(last_contact)).days > 30, false)'
     order:
       - file.name
       - status
@@ -133,6 +144,9 @@ views:
     filters:
       and:
         - 'type == "touchpoint"'
+    sort:
+      - property: date
+        direction: DESC
     order:
       - file.name
       - about

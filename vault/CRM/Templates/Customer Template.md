@@ -1,7 +1,7 @@
 ---
 type: customer
 status: onboarding
-since: 2026-01-01
+since: "{{date:YYYY-MM-DD}}"
 owner:
 plan:
 value_ltv:

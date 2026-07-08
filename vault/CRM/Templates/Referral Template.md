@@ -2,7 +2,7 @@
 type: referral
 referrer:
 referred:
-date: 2026-01-01
+date: "{{date:YYYY-MM-DD}}"
 status: invited
 reward: pending
 tags:

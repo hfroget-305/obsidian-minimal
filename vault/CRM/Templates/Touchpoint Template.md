@@ -1,7 +1,7 @@
 ---
 type: touchpoint
 about:
-date: 2026-01-01
+date: "{{date:YYYY-MM-DD}}"
 channel: call
 sentiment: neutral
 follow_up:

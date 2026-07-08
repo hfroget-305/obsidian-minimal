@@ -1,0 +1,157 @@
+filters:
+  and:
+    - file.hasTag("crm")
+    - 'file.ext == "md"'
+    - '!file.inFolder("CRM/Templates")'
+
+formulas:
+  days_since_contact: 'if(last_contact, (now() - date(last_contact)).days.round(0), "")'
+  days_to_action: 'if(next_action_date, (date(next_action_date) - today()).days, "")'
+  health_icon: 'if(health == "green", "🟢", if(health == "yellow", "🟡", if(health == "red", "🔴", "")))'
+  sentiment_icon: 'if(sentiment == "positive", "😊", if(sentiment == "negative", "😠", "😐"))'
+
+properties:
+  status:
+    displayName: Status
+  source:
+    displayName: Source
+  value:
+    displayName: "Value ($)"
+  formula.days_since_contact:
+    displayName: "Days Since Contact"
+  formula.days_to_action:
+    displayName: "Days To Next Action"
+  formula.health_icon:
+    displayName: Health
+  formula.sentiment_icon:
+    displayName: Mood
+  next_action:
+    displayName: "Next Action"
+  referrals_given:
+    displayName: "Referrals Given"
+
+views:
+  - type: table
+    name: "Lead Pipeline"
+    filters:
+      and:
+        - 'type == "lead"'
+        - 'status != "won"'
+        - 'status != "lost"'
+    groupBy:
+      property: status
+      direction: ASC
+    order:
+      - file.name
+      - status
+      - source
+      - referrer
+      - value
+      - last_contact
+      - formula.days_since_contact
+      - next_action
+      - next_action_date
+      - formula.days_to_action
+    summaries:
+      value: Sum
+
+  - type: table
+    name: "Follow-ups Due"
+    filters:
+      or:
+        - and:
+            - 'type == "lead"'
+            - 'status != "won"'
+            - 'status != "lost"'
+            - 'if(next_action_date, date(next_action_date) <= today(), false)'
+        - and:
+            - 'type == "touchpoint"'
+            - 'if(follow_up_date, date(follow_up_date) <= today(), false)'
+    sort:
+      - property: next_action_date
+        direction: ASC
+    order:
+      - file.name
+      - about
+      - status
+      - next_action
+      - next_action_date
+      - formula.days_to_action
+      - follow_up
+      - follow_up_date
+      - last_contact
+
+  - type: table
+    name: "Customers"
+    filters:
+      and:
+        - 'type == "customer"'
+        - 'status != "churned"'
+    groupBy:
+      property: status
+      direction: ASC
+    order:
+      - file.name
+      - status
+      - formula.health_icon
+      - nps
+      - since
+      - last_contact
+      - formula.days_since_contact
+      - referrals_given
+    summaries:
+      nps: Average
+      referrals_given: Sum
+
+  - type: table
+    name: "At Risk"
+    filters:
+      and:
+        - 'type == "customer"'
+        - or:
+            - 'health == "red"'
+            - 'health == "yellow"'
+            - 'status == "at-risk"'
+            - 'if(last_contact, (now() - date(last_contact)).days > 30, false)'
+    order:
+      - file.name
+      - status
+      - formula.health_icon
+      - nps
+      - last_contact
+      - formula.days_since_contact
+      - next_review
+
+  - type: table
+    name: "Referrals"
+    filters:
+      and:
+        - 'type == "referral"'
+    groupBy:
+      property: status
+      direction: ASC
+    order:
+      - file.name
+      - referrer
+      - referred
+      - date
+      - status
+      - reward
+
+  - type: table
+    name: "Recent Touchpoints"
+    limit: 25
+    filters:
+      and:
+        - 'type == "touchpoint"'
+    sort:
+      - property: date
+        direction: DESC
+    order:
+      - file.name
+      - about
+      - date
+      - channel
+      - formula.sentiment_icon
+      - follow_up
+      - follow_up_date

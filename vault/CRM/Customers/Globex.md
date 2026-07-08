@@ -24,6 +24,10 @@ tags:
 - **Success looks like:** Dispatch time under 2h
 - **Key contacts:** Maria (champion), Tom (billing)
 
+## Health check
+
+🟢 `green` — Q2 QBR went well, champion engaged, gave a referral unprompted.
+
 ## Experience log
 
 - [[2026-07-01 Globex — QBR]]

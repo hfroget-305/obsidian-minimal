@@ -28,6 +28,14 @@ tags:
 
 🔴 `red` — champion departed, usage down 60%, no reply to last two emails.
 
+## Experience log
+
+<!-- Link Touchpoint notes here as win-back calls happen -->
+
+## Referral opportunities
+
+<!-- On hold until health is back to green -->
+
 ## Win-back play
 
 - [ ] Executive check-in call offering onboarding for Sam's replacement

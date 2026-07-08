@@ -26,8 +26,9 @@ customer's `health` to `yellow` or `red` and add a win-back action.
 
 ## Next step
 
-Set `follow_up` (what) and `follow_up_date` (when), and mirror it onto the
-lead/customer note's `next_action` / `next_action_date` so the dashboard catches it.
+Set `follow_up` (what) and `follow_up_date` (when). Mirror it onto the lead
+note's `next_action` / `next_action_date`; for customers, update `next_review`.
+The dashboard's Follow-ups Due view also catches the touchpoint itself.
 
 ## Channel values
 

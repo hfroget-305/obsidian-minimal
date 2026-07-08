@@ -52,7 +52,7 @@ applies directly.
 
 ## 3. The three-layer architecture
 
-```
+```text
 ┌────────────────────────────────────────────────────────┐
 │ Layer 3 · THE DATA (vault/CRM/)                        │
 │ Lead, Customer, Referral, Touchpoint records + views   │  ← the business lives here
@@ -92,7 +92,7 @@ vendored dependencies: the Monday sync keeps them current; you review the PR.
 
 | Record | One file per… | Key fields | Lifecycle (`status`) |
 |---|---|---|---|
-| **Lead** | potential customer | `source`, `referrer`, `value`, `next_action`, `next_action_date` | new → contacted → qualified → proposal → won/lost |
+| **Lead** | potential customer | `source`, `referrer`, `value`, `last_contact`, `next_action`, `next_action_date` | new → contacted → qualified → proposal → won/lost |
 | **Customer** | paying customer | `health` (green/yellow/red), `nps` (0–10), `last_contact`, `referrals_given` | onboarding → active ⇄ at-risk → churned |
 | **Referral** | referral event | `referrer` → customer file, `referred` → lead file, `reward` | invited → contacted → converted/lost |
 | **Touchpoint** | interaction | `about` → who, `channel`, `sentiment`, `follow_up` | — (append-only log) |

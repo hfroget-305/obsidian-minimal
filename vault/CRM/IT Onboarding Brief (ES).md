@@ -57,7 +57,7 @@ que sabes de archivos, Git y CI aplica directamente.
 
 ## 3. La arquitectura de tres capas
 
-```
+```text
 ┌────────────────────────────────────────────────────────────┐
 │ Capa 3 · LOS DATOS (vault/CRM/)                            │
 │ Registros de Lead, Cliente, Referido, Interacción + vistas │  ← aquí vive el negocio
@@ -100,7 +100,7 @@ revisas el PR.
 
 | Registro | Un archivo por… | Campos clave | Ciclo de vida (`status`) |
 |---|---|---|---|
-| **Lead** | cliente potencial | `source`, `referrer`, `value`, `next_action`, `next_action_date` | new → contacted → qualified → proposal → won/lost |
+| **Lead** | cliente potencial | `source`, `referrer`, `value`, `last_contact`, `next_action`, `next_action_date` | new → contacted → qualified → proposal → won/lost |
 | **Cliente** | cliente que paga | `health` (green/yellow/red), `nps` (0–10), `last_contact`, `referrals_given` | onboarding → active ⇄ at-risk → churned |
 | **Referido** | evento de referencia | `referrer` → archivo del cliente, `referred` → archivo del lead, `reward` | invited → contacted → converted/lost |
 | **Interacción** (Touchpoint) | interacción | `about` → con quién, `channel`, `sentiment`, `follow_up` | — (registro solo-añadir) |

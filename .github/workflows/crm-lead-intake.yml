@@ -47,6 +47,8 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Create lead file from event payload
         id: lead
@@ -61,6 +63,7 @@ jobs:
           ISSUE_NUMBER: ${{ steps.lead.outputs.issue_number }}
         run: |
           set -euo pipefail
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
           BRANCH="crm/lead-${{ steps.lead.outputs.slug }}-${{ github.run_id }}"
           git config user.name "crm-intake[bot]"
           git config user.email "crm-intake[bot]@users.noreply.github.com"

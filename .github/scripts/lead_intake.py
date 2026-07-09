@@ -98,14 +98,19 @@ def yaml_str(value: str) -> str:
 
 def main() -> None:
     fields, issue_number = gather_fields()
-    get = lambda k: clean_line(fields.get(k, ""))
+
+    def get(k: str) -> str:
+        return clean_line(fields.get(k, ""))
 
     company = get("company")
     if not company:
         fail("'company' is required")
 
-    # Filename: strip characters that are unsafe on common filesystems/Obsidian
-    slug_name = re.sub(r'[\\/:*?"<>|#^\[\]]', "", company).strip().strip(".")
+    # Filename: strict allowlist — letters, digits, space, and & ' - _ . , +
+    # (defense-in-depth: no shell metacharacters even though values only ever
+    # reach the workflow through env vars, never inline interpolation)
+    slug_name = re.sub(r"[^A-Za-z0-9 &'\-_.,+]", "", company)
+    slug_name = re.sub(r"\s+", " ", slug_name).strip().strip(".")
     if not slug_name:
         fail(f"company name {company!r} produces an empty filename")
 

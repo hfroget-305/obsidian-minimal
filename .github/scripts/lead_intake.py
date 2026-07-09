@@ -49,10 +49,12 @@ def parse_issue_form(body: str) -> dict:
     buf: list[str] = []
     for line in (body or "").splitlines():
         m = re.match(r"^###\s+(.*)$", line)
-        if m:
+        # Only known form labels switch fields — a '### Subheading' the user
+        # typed inside Notes stays part of the current field's content.
+        if m and m.group(1).strip().lower() in HEADING_MAP:
             if current:
                 fields[current] = "\n".join(buf).strip()
-            current = HEADING_MAP.get(m.group(1).strip().lower())
+            current = HEADING_MAP[m.group(1).strip().lower()]
             buf = []
         elif current is not None:
             buf.append(line)
@@ -114,13 +116,17 @@ def main() -> None:
     if not slug_name:
         fail(f"company name {company!r} produces an empty filename")
 
-    source = get("source").lower() or "other"
-    if source not in SOURCES:
+    source = get("source").lower()
+    if not source:
         source = "other"
+    elif source not in SOURCES:
+        fail(f"source {source!r} is not one of: {', '.join(sorted(SOURCES))}")
 
-    value = re.sub(r"[^0-9.]", "", get("value"))
-    if value.count(".") > 1 or value == ".":
-        value = ""
+    # Value: accept plain numbers with optional $ and thousands separators;
+    # reject anything else ('12k', '1e6') rather than silently mangling it.
+    value = get("value").replace("$", "").replace(",", "").replace(" ", "")
+    if value and not re.fullmatch(r"\d+(\.\d+)?", value):
+        fail(f"value {get('value')!r} is not a plain number (e.g. 12000 or 9500.50)")
 
     nad = get("next_action_date")
     if nad:

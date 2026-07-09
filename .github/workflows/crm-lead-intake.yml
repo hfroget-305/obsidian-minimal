@@ -41,8 +41,14 @@ concurrency:
 
 jobs:
   create-lead:
-    # For issue events, only act on issues created from the "New lead" form
-    if: github.event_name != 'issues' || contains(github.event.issue.labels.*.name, 'new-lead')
+    # For issue events, only act on issues created from the "New lead" form.
+    # Match the form's title prefix as well as the label: GitHub only applies
+    # template labels that already exist in the repo, so a fresh repo where
+    # nobody has created the 'new-lead' label yet must not silently skip.
+    if: >-
+      github.event_name != 'issues' ||
+      contains(github.event.issue.labels.*.name, 'new-lead') ||
+      startsWith(github.event.issue.title, 'New lead:')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -64,7 +70,10 @@ jobs:
         run: |
           set -euo pipefail
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
-          BRANCH="crm/lead-${{ steps.lead.outputs.slug }}-${{ github.run_id }}"
+          # Deterministic per-company branch: a second submission for the same
+          # company fails on push while the first PR is still open, instead of
+          # opening a duplicate PR for the same lead file.
+          BRANCH="crm/lead-${{ steps.lead.outputs.slug }}"
           git config user.name "crm-intake[bot]"
           git config user.email "crm-intake[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
@@ -92,4 +101,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh issue comment "${{ github.event.issue.number }}" --body \
-            "❌ Lead intake failed — check the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for the reason (most common: a lead file with this company name already exists, or a malformed date)."
+            "❌ Lead intake failed — check the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for the reason. Most common: a lead file or an open lead PR for this company already exists, a malformed date, a non-numeric value, or an unknown source."

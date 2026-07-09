@@ -67,13 +67,14 @@ jobs:
           COMPANY: ${{ steps.lead.outputs.company }}
           LEAD_PATH: ${{ steps.lead.outputs.lead_path }}
           ISSUE_NUMBER: ${{ steps.lead.outputs.issue_number }}
+          SLUG: ${{ steps.lead.outputs.slug }}
         run: |
           set -euo pipefail
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
           # Deterministic per-company branch: a second submission for the same
           # company fails on push while the first PR is still open, instead of
           # opening a duplicate PR for the same lead file.
-          BRANCH="crm/lead-${{ steps.lead.outputs.slug }}"
+          BRANCH="crm/lead-${SLUG}"
           git config user.name "crm-intake[bot]"
           git config user.email "crm-intake[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"

@@ -136,7 +136,9 @@ propiedades:
    pudre en silencio — todo trabajo automatizado falla ruidosamente.
 
 2. **Captura de registros sin tocar nada.** Un lead nuevo nunca se escribe a
-   mano:
+   mano (🔶 primeras vías en marcha: formulario de issue, ejecución manual y
+   despacho por API → PR con el archivo del lead vía `crm-lead-intake.yml`;
+   falta el vigilante de correo):
    - Formulario web / correo entrante → aparece un archivo de lead con el
      formato correcto en `CRM/Leads/` con `status: new` y la fecha de hoy,
      mediante una pequeña automatización (GitHub Action, flujo de n8n o un

@@ -122,7 +122,9 @@ automated**. Concretely, the finished product has five properties:
    PRs (✅ already live: the Monday sync). Backups are automatic (Git history +
    an off-site copy). Nothing rots silently — every automated job fails loudly.
 
-2. **Zero-touch record intake.** A new lead never gets typed in by hand:
+2. **Zero-touch record intake.** A new lead never gets typed in by hand
+   (🔶 first paths live: issue form, manual run, and API dispatch → lead-file
+   PR via `crm-lead-intake.yml`; email watcher still to build):
    - Website form / inbound email → a correctly-formatted lead file appears in
      `CRM/Leads/` with `status: new` and today's date, via a small automation
      (GitHub Action, n8n flow, or a script watching a mailbox — your call).

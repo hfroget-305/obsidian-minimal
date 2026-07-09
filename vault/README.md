@@ -20,3 +20,24 @@ Requires Obsidian 1.9+ (the version that introduced Bases). Point Obsidian's cor
 
 The file node in the canvas references `CRM/CRM Home.md`, so keep the folder
 named `CRM` at the vault root (or update that node's `file` path).
+
+### Adding leads without typing (intake automation)
+
+Three ways to create a lead record; each opens a pull request with a
+correctly-formatted file in `CRM/Leads/` — nothing writes to `master` directly:
+
+1. **Issue form** — open a "📥 New lead" issue (Issues → New issue). Works from
+   a phone. The workflow builds the record, opens the PR, and closes the issue.
+2. **Manual run** — Actions → "CRM lead intake" → Run workflow, fill the fields.
+3. **API** — POST a `repository_dispatch` event (for a website form backend):
+
+   ```bash
+   curl -X POST \
+     -H "Authorization: Bearer $GITHUB_TOKEN" \
+     -H "Accept: application/vnd.github+json" \
+     https://api.github.com/repos/<owner>/<repo>/dispatches \
+     -d '{"event_type":"new-lead","client_payload":{"company":"Acme Corp","email":"jane@acme.com","source":"website","value":"12000"}}'
+   ```
+
+Duplicate company names and malformed dates are rejected loudly (a comment on
+the intake issue tells you why). See `.github/workflows/crm-lead-intake.yml`.

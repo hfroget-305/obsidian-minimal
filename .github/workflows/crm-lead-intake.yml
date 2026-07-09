@@ -1,0 +1,92 @@
+name: CRM lead intake
+
+on:
+  issues:
+    types: [opened]
+  workflow_dispatch:
+    inputs:
+      company:
+        description: "Company (required)"
+        required: true
+      contact:
+        description: "Contact name"
+      email:
+        description: "Email"
+      phone:
+        description: "Phone"
+      source:
+        description: "Source: website / referral / ads / event / outreach / other"
+        default: "other"
+      referrer:
+        description: "Referrer (existing customer, for source: referral)"
+      value:
+        description: "Estimated value (USD, digits only)"
+      next_action:
+        description: "Next action"
+      next_action_date:
+        description: "Next action date (YYYY-MM-DD)"
+      notes:
+        description: "Notes"
+  repository_dispatch:
+    types: [new-lead]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: crm-lead-intake
+  cancel-in-progress: false
+
+jobs:
+  create-lead:
+    # For issue events, only act on issues created from the "New lead" form
+    if: github.event_name != 'issues' || contains(github.event.issue.labels.*.name, 'new-lead')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create lead file from event payload
+        id: lead
+        run: python3 .github/scripts/lead_intake.py
+
+      - name: Open pull request
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COMPANY: ${{ steps.lead.outputs.company }}
+          LEAD_PATH: ${{ steps.lead.outputs.lead_path }}
+          ISSUE_NUMBER: ${{ steps.lead.outputs.issue_number }}
+        run: |
+          set -euo pipefail
+          BRANCH="crm/lead-${{ steps.lead.outputs.slug }}-${{ github.run_id }}"
+          git config user.name "crm-intake[bot]"
+          git config user.email "crm-intake[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add "$LEAD_PATH"
+          git commit -m "Add lead: $COMPANY (via ${{ github.event_name }})"
+          git push -u origin "$BRANCH"
+          BODY="Automated lead intake from \`${{ github.event_name }}\`.
+
+          Record: \`$LEAD_PATH\` (status: \`new\`, first response due today)."
+          if [ -n "$ISSUE_NUMBER" ]; then
+            BODY="$BODY
+
+          Closes #$ISSUE_NUMBER."
+          fi
+          PR_URL=$(gh pr create --title "New lead: $COMPANY" --body "$BODY" \
+            --base "${{ github.event.repository.default_branch }}" --head "$BRANCH")
+          echo "url=$PR_URL" >> "$GITHUB_OUTPUT"
+          if [ -n "$ISSUE_NUMBER" ]; then
+            gh issue comment "$ISSUE_NUMBER" --body "✅ Lead record created — review and merge $PR_URL"
+          fi
+
+      - name: Report failure on the intake issue
+        if: failure() && github.event_name == 'issues'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue comment "${{ github.event.issue.number }}" --body \
+            "❌ Lead intake failed — check the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for the reason (most common: a lead file with this company name already exists, or a malformed date)."

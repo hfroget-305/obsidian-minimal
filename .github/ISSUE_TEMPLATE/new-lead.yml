@@ -1,0 +1,70 @@
+name: "📥 New lead"
+description: "Add a lead to the CRM — a correctly-formatted record file is opened as a PR automatically."
+title: "New lead: <company>"
+labels: ["new-lead"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Fill this in and submit — the intake workflow turns it into a lead file
+        in `vault/CRM/Leads/` and opens a pull request. Only **Company** is required.
+  - type: input
+    id: company
+    attributes:
+      label: Company
+      placeholder: "Acme Corp"
+    validations:
+      required: true
+  - type: input
+    id: contact
+    attributes:
+      label: Contact name
+      placeholder: "Jane Smith (Ops Manager)"
+  - type: input
+    id: email
+    attributes:
+      label: Email
+      placeholder: "jane@acme.com"
+  - type: input
+    id: phone
+    attributes:
+      label: Phone
+  - type: dropdown
+    id: source
+    attributes:
+      label: Source
+      options:
+        - website
+        - referral
+        - ads
+        - event
+        - outreach
+        - other
+      default: 5
+  - type: input
+    id: referrer
+    attributes:
+      label: Referrer (existing customer)
+      description: "Only for source: referral — the customer who made the introduction."
+      placeholder: "Globex"
+  - type: input
+    id: value
+    attributes:
+      label: Estimated value (USD)
+      placeholder: "12000"
+  - type: input
+    id: next_action
+    attributes:
+      label: Next action
+      placeholder: "Intro call"
+  - type: input
+    id: next_action_date
+    attributes:
+      label: Next action date
+      description: "YYYY-MM-DD — defaults to today if left blank."
+      placeholder: "2026-07-15"
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      placeholder: "Anything worth remembering from the first contact."

@@ -8,8 +8,9 @@ tags:
 # CRM Home
 
 The hub for the leads → customers → referrals experience. The visual journey lives in
-[[Customer Experience Flow.canvas|Customer Experience Flow]]; the live data lives in the
-dashboard below. The whole point of this system is the loop at the bottom of this note:
+[[Customer Experience Flow.canvas|Customer Experience Flow]]; the full operational
+analysis — stage-by-stage friction, leaks, automations, scores, and KPIs — lives in
+[[Customer Journey Map]]; the live data lives in the dashboard below. The whole point of this system is the loop at the bottom of this note:
 **measure the experience → spot friction → improve it → repeat**.
 
 ## The journey at a glance

@@ -11,6 +11,7 @@ Copy the `CRM/` folder to the root of your vault. It contains:
 |------|------------|
 | `CRM/CRM Home.md` | Hub note: journey map (Mermaid), data model, embedded dashboard views, weekly improvement ritual |
 | `CRM/Customer Experience Flow.canvas` | Visual journey: Attract → Convert → Deliver → Delight & Refer, plus the continuous-improvement loop |
+| `CRM/Customer Journey Map.md` | Operational journey map: 24-section lifecycle analysis — emotions, friction, leaks, activation & churn scores, automation specs, KPIs, prioritized fixes |
 | `CRM/Dashboards/CRM Dashboard.base` | Six live views: Lead Pipeline, Follow-ups Due, Customers, At Risk, Referrals, Recent Touchpoints |
 | `CRM/Templates/*.md` | Note templates for Lead, Customer, Referral, Touchpoint records |
 | `CRM/Leads/`, `CRM/Customers/`, `CRM/Referrals/`, `CRM/Touchpoints/` | Example records so everything renders with data — replace with your own |
